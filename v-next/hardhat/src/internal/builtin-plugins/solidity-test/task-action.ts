@@ -1,5 +1,4 @@
-import type { RunOptions } from "./runner.js";
-import type { TestEvent } from "./types.js";
+import type { RunOptions, TestEvent } from "./types.js";
 import type { NewTaskActionFunction } from "../../../types/tasks.js";
 
 import { finished } from "node:stream/promises";
@@ -8,7 +7,7 @@ import { getArtifacts, isTestArtifact } from "./helpers.js";
 import { testReporter } from "./reporter.js";
 import { run } from "./runner.js";
 
-const runSolidityTests: NewTaskActionFunction = async ({ timeout }, hre) => {
+const runSolidityTests: NewTaskActionFunction = async (_taskArguments, hre) => {
   await hre.tasks.getTask("compile").run({ quiet: false });
 
   console.log("\nRunning Solidity tests...\n");
@@ -31,7 +30,11 @@ const runSolidityTests: NewTaskActionFunction = async ({ timeout }, hre) => {
   let includesFailures = false;
   let includesErrors = false;
 
-  const options: RunOptions = { timeout };
+  const profileName = hre.globalOptions.buildProfile;
+  const profile = hre.config.solidity.profiles[profileName];
+  const testOptions = profile.test;
+
+  const options: RunOptions = { timeout: testOptions.timeout };
 
   const runStream = run(artifacts, testSuiteIds, config, options);
 

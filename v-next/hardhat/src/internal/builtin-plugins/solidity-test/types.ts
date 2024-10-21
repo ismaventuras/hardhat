@@ -1,6 +1,13 @@
 import type { SuiteResult } from "@ignored/edr";
 import type { Readable } from "node:stream";
 
+export interface RunOptions {
+  /**
+   * The maximum time in milliseconds to wait for all the test suites to finish.
+   */
+  timeout?: number;
+}
+
 export type TestStatus = "Success" | "Failure" | "Skipped";
 
 export type TestsStream = Readable;
